@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://fabricjs.com/image-filters/ -->
+<html lang="en" ng-app="kitchensink">
+<style>
+	canvas{
+  border: 1px solid black;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://rawgit.com/kangax/fabric.js/master/dist/fabric.min.js"></script>
+
+<input type="file" id="file">
+<input type="color" value="blue" id="fill" />
+<select id="font">
+  <option>arial</option>
+  <option>tahoma</option>
+  <option>times new roman</option>
+</select>
+<button onclick="addText()">Add Custom Text</button>
+<br />
+<canvas id="canvas" width="750" height="550"></canvas>
+<a href='' id='txt' target="_blank">Click Me!!</a>
+<br />
+<img id="preview" />	
+ <script>
+
+                      
+ 	var canvas = new fabric.Canvas('canvas');
+
+document.getElementById('file').addEventListener("change", function (e) {
+  var file = e.target.files[0];
+  var reader = new FileReader();
+  console.log("reader   " + reader);
+  reader.onload = function (f) {
+    var data = f.target.result;
+    fabric.Image.fromURL(data, function (img) {
+      var oImg = img.set({left: 70, top: 100, width: 450, height: 400, angle: 0}).scale(0.9);
+      canvas.add(oImg).renderAll();
+      canvas.setActiveObject(oImg);  
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+$('#fill').change(function(){
+  var obj = canvas.getActiveObject();
+  if(obj){
+    obj.setFill($(this).val());
+  }
+  canvas.renderAll();
+});
+
+$('#font').change(function(){
+  var obj = canvas.getActiveObject();
+  if(obj){
+    obj.setFontFamily($(this).val());
+  }
+  canvas.renderAll();
+});
+
+function addText() {
+  var oText = new fabric.IText('Tap and Type', { 
+    left: 100, 
+    top: 100 ,
+  });
+
+  canvas.add(oText);
+  canvas.setActiveObject(oText);
+  $('#fill, #font').trigger('change');
+  oText.bringToFront();
+}
+
+document.querySelector('#txt').onclick = function (e) {
+  e.preventDefault();
+  canvas.deactivateAll().renderAll();
+  document.querySelector('#preview').src = canvas.toDataURL();
+};
+
+
+
+ /*canvas.add(new fabric.IText('Tap and Type', { 
+                         fontFamily: 'arial black',
+                         left: 100, 
+                         top: 100 ,
+                      }));*/
+ </script>
+</html>
